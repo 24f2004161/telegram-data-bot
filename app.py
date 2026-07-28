@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
+import json
 import os
 
 from memory import (
@@ -16,6 +17,7 @@ from logger import (
 
 from llm import ask_gemini
 from telegram_api import send_message
+from config import PUBLIC_BASE_URL
 
 app = FastAPI()
 
@@ -76,23 +78,38 @@ async def webhook(request: Request):
         conversation=conversation
     )
 
-    answer = ask_gemini(conversation)
-
-    log(
-        "llm_prompt",
-        prompt=conversation
-    )
+    llm_output = ask_gemini(conversation)
 
     log(
         "llm_response",
-        response=answer
+        response=llm_output
     )
 
-    send_message(chat_id, answer)
+    # Try to interpret the model output as JSON.
+    # If it isn't valid JSON, return it as plain text.
+    try:
+        answer = json.loads(llm_output)
+    except Exception:
+        answer = llm_output
+
+    final_response = {
+        "answer": answer,
+        "log_url": f"{PUBLIC_BASE_URL}/run.jsonl"
+    }
+
+    log(
+        "final_response",
+        response=final_response
+    )
+
+    send_message(
+        chat_id,
+        json.dumps(final_response, ensure_ascii=False)
+    )
 
     log(
         "telegram_reply",
-        response=answer
+        response=final_response
     )
 
     clear_conversation(chat_id)
