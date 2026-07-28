@@ -1,2 +1,4 @@
-{"timestamp": "2026-07-28T18:00:43.591777", "step": "receive", "content": "Hello"}
-{"timestamp": "2026-07-28T18:00:43.591878", "step": "answer", "content": "Hi"}
+{"timestamp": "2026-07-28T18:40:45.431964", "event": "user_message", "text": "Hello"}
+{"timestamp": "2026-07-28T18:40:45.432029", "event": "conversation", "conversation": "Hello"}
+{"timestamp": "2026-07-28T18:40:45.432056", "event": "llm_response", "response": "{\"answer\":\"Hello\"}"}
+{"timestamp": "2026-07-28T18:40:45.432076", "event": "telegram_reply", "response": "{\"answer\":\"Hello\"}"}
